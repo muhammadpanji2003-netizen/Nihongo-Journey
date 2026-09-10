@@ -271,6 +271,7 @@ let remoteSyncTimer = null;
 
 const $ = s => document.querySelector(s);
 const app = $("#app");
+window.__JJ_APP_STARTED__ = true;
 const KEY = "japaneseJourneyV2";
 
 const defaultState = {
@@ -975,21 +976,38 @@ function render(){
 }
 window.addEventListener("hashchange",render);
 
-async function initApp(){
-  if(!supabase && supabaseReady && window.supabase?.createClient){
-    try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY); }
-    catch(e){ console.warn("Supabase tidak tersedia, lanjut guest mode.",e); }
-  }
-  if(supabaseReady && supabase){
+function loadSupabaseSdk(){
+  return new Promise((resolve)=>{
+    if(window.supabase?.createClient) return resolve(true);
+    const script=document.createElement("script");
+    script.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+    script.async=true;
+    script.onload=()=>resolve(!!window.supabase?.createClient);
+    script.onerror=()=>resolve(false);
+    document.head.appendChild(script);
+  });
+}
+
+async function initCloud(){
+  try{
+    if(!supabaseReady) return;
+    const loaded=await loadSupabaseSdk();
+    if(!loaded) return console.warn("Supabase SDK gagal dimuat; guest mode tetap aktif.");
+    if(!supabase) supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
     const {data}=await supabase.auth.getSession();
-    authUser=data.session?.user || null;
+    authUser=data.session?.user||null;
     if(authUser) await loadProgressFromCloud();
-    supabase.auth.onAuthStateChange(async (_event,session)=>{
-      authUser=session?.user || null;
+    supabase.auth.onAuthStateChange(async(_event,session)=>{
+      authUser=session?.user||null;
       if(authUser) await loadProgressFromCloud();
       render();
     });
+    render();
+  }catch(e){
+    console.warn("Cloud login gagal; guest mode tetap aktif.",e);
   }
-  render();
 }
-initApp();
+
+// Render aplikasi langsung. Koneksi login/cloud menyusul dan tidak boleh memblokir materi.
+render();
+setTimeout(initCloud,0);

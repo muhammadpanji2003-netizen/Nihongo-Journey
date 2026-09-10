@@ -51,17 +51,19 @@
     </form>
   </dialog>
 
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="app.js"></script>
 
   <script>
     window.addEventListener("load", function () {
       setTimeout(function () {
-        var root = document.getElementById("app");
-        if (root && !root.innerHTML.trim()) {
-          root.innerHTML = '<section class="card section" style="margin-top:32px"><h2>Aplikasi belum berhasil dimuat</h2><p>Silakan lakukan hard refresh (Ctrl+F5). Jika pesan ini tetap muncul, file app.js pada deployment belum diperbarui.</p></section>';
+        var root=document.getElementById("app");
+        if(!root) return;
+        if(!window.__JJ_APP_STARTED__){
+          root.innerHTML='<section class="card section" style="margin-top:32px"><h2>app.js tidak berjalan</h2><p>Pastikan file <strong>app.js</strong> V5.5.1 sudah ter-upload ke root GitHub dan deployment Vercel terbaru sudah selesai.</p></section>';
+        }else if(!root.innerHTML.trim()){
+          root.innerHTML='<section class="card section" style="margin-top:32px"><h2>Halaman gagal dirender</h2><p>JavaScript sudah terbaca tetapi render gagal.</p></section>';
         }
-      }, 1800);
+      },1200);
     });
   </script>
 
