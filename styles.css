@@ -118,5 +118,5 @@ a{text-decoration:none;color:inherit}
 .progress-note{margin-top:16px}
 @media(max-width:760px){.progress-two{grid-template-columns:1fr}.progress-label{font-size:14px}}
 
-.path-link{text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s ease,border-color .15s ease}
+.path-link{display:flex;text-decoration:none;color:inherit;cursor:pointer;transition:transform .16s ease,border-color .16s ease,background .16s ease}
 .path-link:hover{transform:translateY(-2px);border-color:#93b4f5;background:#f8fbff}

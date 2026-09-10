@@ -1,6 +1,5 @@
 
 import { kana, vocab, kanji, grammar, readings } from "./content.js";
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./config.js";
 
 const supabaseReady = Boolean(
@@ -9,7 +8,11 @@ const supabaseReady = Boolean(
   !SUPABASE_URL.includes("YOUR_PROJECT") &&
   !SUPABASE_PUBLISHABLE_KEY.includes("YOUR_PUBLISHABLE")
 );
-const supabase = supabaseReady ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
+let supabase = null;
+if (supabaseReady && window.supabase?.createClient) {
+  try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY); }
+  catch (e) { console.warn("Supabase init gagal; aplikasi tetap berjalan sebagai guest.", e); }
+}
 let authUser = null;
 let remoteSyncTimer = null;
 
@@ -22,7 +25,16 @@ const defaultState = {
   completed:[], wrong:[], favorites:[], notes:{}, mastery:{}, quizHistory:[],
   account:null
 };
-let state = {...defaultState, ...(JSON.parse(localStorage.getItem(KEY)||"{}"))};
+let savedState = {};
+try { savedState = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+catch (e) { console.warn("Progress lokal rusak, memakai state baru.", e); }
+let state = {...defaultState, ...savedState};
+state.completed = Array.isArray(state.completed) ? state.completed : [];
+state.wrong = Array.isArray(state.wrong) ? state.wrong : [];
+state.favorites = Array.isArray(state.favorites) ? state.favorites : [];
+state.quizHistory = Array.isArray(state.quizHistory) ? state.quizHistory : [];
+state.notes = state.notes && typeof state.notes === "object" ? state.notes : {};
+state.mastery = state.mastery && typeof state.mastery === "object" ? state.mastery : {};
 
 function save(){
   localStorage.setItem(KEY, JSON.stringify(state));
@@ -107,7 +119,14 @@ function bumpMastery(id, correct){
   if(correct && state.mastery[id] >= 70) state.wrong = state.wrong.filter(x=>x!==id);
   save();
 }
-function route(){ return location.hash.replace("#","") || "/home"; }
+function route(){
+  const raw = location.hash.replace("#","") || "/home";
+  return raw.split("?")[0];
+}
+function hashParams(){
+  const raw = location.hash.split("?")[1] || "";
+  return new URLSearchParams(raw);
+}
 function navigate(path){ location.hash = path; }
 
 const header = (eyebrow,title,sub="") => `<section class="section-head"><div><small class="eyebrow">${eyebrow}</small><h2>${title}</h2>${sub?`<p>${sub}</p>`:""}</div></section>`;
@@ -145,19 +164,17 @@ function home(){
 
 function learningPath(){
   const steps = [
-    ["🌱","Beginner","Pengenalan dan placement awal","#/placement","Mulai"],
-    ["あ","Hiragana","Basic, dakuten, handakuten, dan yōon","#/learn/kana","Buka"],
-    ["ア","Katakana","Basic, dakuten, handakuten, dan yōon","#/learn/kana","Buka"],
-    ["🇯🇵","JLPT N5","Vocabulary, Kanji, Grammar, Listening, Reading","#/learn/vocab","Buka"],
-    ["🇯🇵","JLPT N4","Vocabulary, Kanji, Grammar, Listening, Reading","#/learn/vocab","Buka"],
-    ["🇯🇵","JLPT N3","Vocabulary, Kanji, Grammar, Listening, Reading","#/learn/vocab","Buka"],
-    ["🏆","N3 Master","Review dan persiapan mock test","#/progress","Progres"]
+    ["🌱","Beginner","Pronunciation, greetings, basic expressions","current"],
+    ["あ","Hiragana","Basic, dakuten, handakuten, yōon",""],
+    ["ア","Katakana","Basic & loanword combinations",""],
+    ["🇯🇵","JLPT N5","Vocabulary, Kanji, Grammar, Reading",""],
+    ["🇯🇵","JLPT N4","Elementary-intermediate Japanese","locked"],
+    ["🇯🇵","JLPT N3","Intermediate Japanese & JLPT prep","locked"],
+    ["🏆","N3 Master","Mock test & weak-area review","locked"]
   ];
-  app.innerHTML = `${header("LEARNING PATH","Jalur Belajar","Semua tahap dapat dibuka tanpa login. Login hanya untuk menyimpan progres online.")}
-  <div class="roadmap">${steps.map(s=>`<a class="road-step path-link" href="${s[3]}"><div class="road-icon">${s[0]}</div><div><h3>${s[1]}</h3><p style="margin:0">${s[2]}</p></div><span class="badge blue">${s[4]} →</span></a>`).join("")}</div>`;
+  app.innerHTML = `${header("LEARNING PATH","Jalur Belajar","Ikuti roadmap dari nol sampai JLPT N3.")}
+  <div class="roadmap">${steps.map((s,i)=>`<div class="road-step ${s[3]}"><div class="road-icon">${s[0]}</div><div><h3>${s[1]}</h3><p style="margin:0">${s[2]}</p></div><span class="badge ${i<2?"blue":i===0?"green":""}">${i===0?"In Progress":s[3]==="locked"?"🔒 Locked":"Not Started"}</span></div>`).join("")}</div>`;
 }
-
-function pathHref(title){ return ({ "Beginner":"#/placement","Hiragana":"#/learn/kana","Katakana":"#/learn/kana","JLPT N5":"#/learn/vocab","JLPT N4":"#/learn/grammar","JLPT N3":"#/learn/reading","N3 Master":"#/progress" })[title] || "#/learn"; }
 
 function learn(){
   const steps = [
@@ -171,7 +188,10 @@ function learn(){
   ];
   app.innerHTML = `${header("BELAJAR","Learning Path","Jalur belajar dan seluruh materi sekarang berada dalam satu menu.")}
   <div class="roadmap compact-roadmap">
-    ${steps.map((s,i)=>`<div class="road-step ${s[3]}"><div class="road-icon">${s[0]}</div><div><h3>${s[1]}</h3><p style="margin:0">${s[2]}</p></div><span class="badge ${i<3?"blue":""}">${i===0?"Mulai":s[3]==="locked"?"🔒 Bertahap":"Tersedia"}</span></div>`).join("")}
+    ${steps.map((s,i)=>{
+      const href = i===0 ? "#/placement" : i===1 ? "#/learn/kana" : i===2 ? "#/learn/kana?type=katakana" : i===3 ? "#/learn/vocab?level=N5" : i===4 ? "#/learn/vocab?level=N4" : i===5 ? "#/learn/vocab?level=N3" : "#/progress";
+      return `<a class="road-step path-link" href="${href}"><div class="road-icon">${s[0]}</div><div><h3>${s[1]}</h3><p style="margin:0">${s[2]}</p></div><span class="badge blue">${i===0?"Mulai":"Buka"} →</span></a>`;
+    }).join("")}
   </div>
   <section class="section">
     ${header("MATERI","Pilih materi","Setiap materi nantinya mengikuti alur Belajar → Latihan → Kuis → Review.")}
@@ -191,7 +211,7 @@ function learn(){
 }
 
 function kanaPage(){
- let type="hiragana", group="basic";
+ let type=hashParams().get("type")==="katakana" ? "katakana" : "hiragana", group="basic";
  const label=()=>type==="hiragana"?"Hiragana":"Katakana";
  const render=()=>{
    const items=kana.filter(k=>k.type===type&&(group==="all"||k.group===group));
@@ -672,6 +692,7 @@ function searchSetup(){
 searchSetup();
 
 function render(){
+ try {
  document.querySelectorAll(".desktop-nav a,.mobile-nav a").forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+route()));
  const r=route();
  if(r==="/home"||r==="/") home();
@@ -694,11 +715,19 @@ function render(){
  else if(r==="/profile") profile();
  else home();
  window.scrollTo({top:0,behavior:"smooth"});
+ } catch (e) {
+   console.error("Render error:", e);
+   if(app) app.innerHTML = `<section class="card section"><h2>Terjadi kendala saat memuat halaman</h2><p>Aplikasi tetap aman. Muat ulang halaman atau kembali ke Home.</p><a class="btn primary" href="#/home">Kembali ke Home</a></section>`;
+ }
 }
 window.addEventListener("hashchange",render);
 
 async function initApp(){
-  if(supabaseReady){
+  if(!supabase && supabaseReady && window.supabase?.createClient){
+    try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY); }
+    catch(e){ console.warn("Supabase tidak tersedia, lanjut guest mode.",e); }
+  }
+  if(supabaseReady && supabase){
     const {data}=await supabase.auth.getSession();
     authUser=data.session?.user || null;
     if(authUser) await loadProgressFromCloud();
