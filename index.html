@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="description" content="Japanese Journey — belajar bahasa Jepang dari nol sampai JLPT N3." />
+  <title>Japanese Journey — Zero to JLPT N3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/home" aria-label="Japanese Journey Home">
+      <span class="brand-mark">日</span>
+      <span><strong>Japanese Journey</strong><small>Zero → JLPT N3</small></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Navigasi utama">
+      <a href="#/home">Home</a>
+      <a href="#/learning-path">Learning Path</a>
+      <a href="#/learn">Learn</a>
+      <a href="#/practice">Practice</a>
+      <a href="#/review">Review</a>
+      <a href="#/progress">Progress</a>
+    </nav>
+    <div class="top-actions">
+      <button id="searchBtn" class="icon-btn" title="Search" aria-label="Search">⌕</button>
+      <a class="xp-pill" href="#/progress"><span>⭐</span><strong id="xpTop">0 XP</strong></a>
+      <a class="avatar" href="#/profile" title="Profile">MP</a>
+    </div>
+  </header>
+
+  <main id="app" class="app-shell"></main>
+
+  <nav class="mobile-nav" aria-label="Navigasi mobile">
+    <a href="#/home"><span>⌂</span><small>Home</small></a>
+    <a href="#/learning-path"><span>🗺</span><small>Path</small></a>
+    <a href="#/learn"><span>本</span><small>Learn</small></a>
+    <a href="#/practice"><span>✎</span><small>Practice</small></a>
+    <a href="#/progress"><span>◫</span><small>Progress</small></a>
+  </nav>
+
+  <dialog id="searchDialog" class="search-dialog">
+    <form method="dialog" class="search-panel">
+      <div class="search-head">
+        <div>
+          <small class="eyebrow">GLOBAL SEARCH</small>
+          <h2>Cari materi</h2>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Tutup">×</button>
+      </div>
+      <input id="globalSearch" type="search" placeholder="Contoh: 学校, school, たべる, ～たい" autocomplete="off" />
+      <div id="searchResults" class="search-results"></div>
+    </form>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
