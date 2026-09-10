@@ -103,3 +103,8 @@ Halaman Progres menampilkan:
 - rekomendasi untuk kembali ke alur belajar.
 
 Cloud progress Supabase tetap aktif untuk pengguna yang login.
+
+## V5.5 — No-Module Stability Fix
+Versi ini menggabungkan konfigurasi, data materi, dan aplikasi ke satu `app.js` klasik.
+Tujuannya menghilangkan kegagalan `import`/ES-module yang dapat membuat area utama kosong di deployment statis Vercel.
+`content.js` dan `config.js` tetap disertakan sebagai sumber data/referensi, tetapi browser tidak lagi bergantung pada kedua file tersebut saat startup.

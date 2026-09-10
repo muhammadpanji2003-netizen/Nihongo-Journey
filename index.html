@@ -52,6 +52,18 @@
   </dialog>
 
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" src="app.js"></script>
+  <script defer src="app.js"></script>
+
+  <script>
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        var root = document.getElementById("app");
+        if (root && !root.innerHTML.trim()) {
+          root.innerHTML = '<section class="card section" style="margin-top:32px"><h2>Aplikasi belum berhasil dimuat</h2><p>Silakan lakukan hard refresh (Ctrl+F5). Jika pesan ini tetap muncul, file app.js pada deployment belum diperbarui.</p></section>';
+        }
+      }, 1800);
+    });
+  </script>
+
 </body>
 </html>
