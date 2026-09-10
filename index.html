@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nihongo Journey — web belajar bahasa Jepang dari Hiragana, Katakana, JLPT N5 hingga N3." />
+  <title>Nihongo Journey | Belajar Jepang N5–N3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" data-nav="home" aria-label="Beranda">
+        <span class="brand-mark">日</span>
+        <span><strong>Nihongo Journey</strong><small>Japanese Learning Path</small></span>
+      </button>
+      <nav class="desktop-nav">
+        <button class="nav-btn active" data-nav="home">Beranda</button>
+        <button class="nav-btn" data-nav="path">Jalur Belajar</button>
+        <button class="nav-btn" data-nav="library">Materi</button>
+        <button class="nav-btn" data-nav="quiz">Latihan</button>
+        <button class="nav-btn" data-nav="progress">Progress</button>
+        <button class="nav-btn" data-nav="about">Tentang</button>
+      </nav>
+      <div class="xp-pill"><span>⚡</span><strong id="headerXP">0 XP</strong></div>
+    </header>
+
+    <main>
+      <section id="home" class="page active-page">
+        <div class="hero card">
+          <div class="hero-copy">
+            <span class="eyebrow">日本語を勉強しましょう</span>
+            <h1>Belajar bahasa Jepang dari <span>nol sampai N3.</span></h1>
+            <p>Mulai dari Kana, lanjut ke kosakata, kanji, dan pola tata bahasa JLPT N5, N4, hingga N3. Belajar bertahap, latihan berulang, dan pantau mastery kamu.</p>
+            <div class="hero-actions">
+              <button class="primary-btn" data-nav="path">Mulai Jalur Belajar</button>
+              <button class="secondary-btn" data-nav="quiz">Latihan Cepat</button>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="sun"></div><div class="jp-card c1">あ</div><div class="jp-card c2">日本</div><div class="jp-card c3">N3</div>
+          </div>
+        </div>
+
+        <div class="today-row">
+          <article class="metric card"><span class="metric-icon">🔥</span><div><small>Streak</small><strong id="homeStreak">0 hari</strong></div></article>
+          <article class="metric card"><span class="metric-icon">⚡</span><div><small>Total XP</small><strong id="homeXP">0 XP</strong></div></article>
+          <article class="metric card"><span class="metric-icon">🎯</span><div><small>Akurasi</small><strong id="homeAccuracy">0%</strong></div></article>
+          <article class="metric card"><span class="metric-icon">⭐</span><div><small>Dikuasai</small><strong id="homeMastered">0 item</strong></div></article>
+        </div>
+
+        <div class="section-heading"><div><span class="eyebrow">ROADMAP</span><h2>Perjalanan belajar kamu</h2></div><button class="text-btn" data-nav="path">Lihat semua →</button></div>
+        <div class="roadmap-preview">
+          <article class="level-card foundation card" data-open-level="foundation"><div class="level-badge">基</div><div><small>Fondasi</small><h3>Hiragana & Katakana</h3><p>Bangun dasar membaca Jepang.</p></div><span class="arrow">→</span></article>
+          <article class="level-card n5 card" data-open-level="N5"><div class="level-badge">N5</div><div><small>Pemula</small><h3>JLPT N5</h3><p>Kosakata, kanji, dan grammar dasar.</p></div><span class="arrow">→</span></article>
+          <article class="level-card n4 card" data-open-level="N4"><div class="level-badge">N4</div><div><small>Dasar lanjut</small><h3>JLPT N4</h3><p>Perluas kalimat dan percakapan.</p></div><span class="arrow">→</span></article>
+          <article class="level-card n3 card" data-open-level="N3"><div class="level-badge">N3</div><div><small>Menengah</small><h3>JLPT N3</h3><p>Menuju komunikasi menengah.</p></div><span class="arrow">→</span></article>
+        </div>
+
+        <div class="section-heading"><div><span class="eyebrow">LANJUTKAN</span><h2>Latihan yang tersedia</h2></div></div>
+        <div class="feature-grid">
+          <button class="feature-card card" data-quick="kana"><span class="feature-symbol">あ</span><div><h3>Kana Challenge</h3><p>Hiragana & Katakana campuran</p></div><span>Mulai →</span></button>
+          <button class="feature-card card" data-quick="vocab"><span class="feature-symbol">語</span><div><h3>Vocabulary Drill</h3><p>Kosakata N5–N3 secara acak</p></div><span>Mulai →</span></button>
+          <button class="feature-card card" data-quick="review"><span class="feature-symbol">↻</span><div><h3>Review Salah</h3><p>Ulangi item yang belum dikuasai</p></div><span>Mulai →</span></button>
+        </div>
+      </section>
+
+      <section id="path" class="page">
+        <div class="page-header"><div><span class="eyebrow">JALUR BELAJAR</span><h1>Dari fondasi sampai JLPT N3</h1><p>Selesaikan materi secara bertahap. Mastery meningkat setiap kali kamu menjawab dengan benar.</p></div></div>
+        <div id="pathContainer" class="path-container"></div>
+      </section>
+
+      <section id="library" class="page">
+        <div class="page-header"><div><span class="eyebrow">PERPUSTAKAAN</span><h1>Materi belajar</h1><p>Cari dan pelajari Kana, kosakata, kanji, atau pola tata bahasa.</p></div></div>
+        <div class="library-toolbar card">
+          <div class="segmented" id="materialTabs">
+            <button class="segment active" data-material="kana">Kana</button>
+            <button class="segment" data-material="vocab">Kosakata</button>
+            <button class="segment" data-material="kanji">Kanji</button>
+            <button class="segment" data-material="grammar">Grammar</button>
+          </div>
+          <div class="filters"><select id="levelFilter"><option value="all">Semua level</option><option>N5</option><option>N4</option><option>N3</option></select><input id="materialSearch" type="search" placeholder="Cari materi..." /></div>
+        </div>
+        <div id="materialContent"></div>
+      </section>
+
+      <section id="quiz" class="page">
+        <div class="page-header"><div><span class="eyebrow">PRACTICE ARENA</span><h1>Latihan adaptif</h1><p>Pilih materi dan level. Jawaban salah otomatis masuk ke daftar review.</p></div></div>
+        <div id="quizSetup" class="quiz-setup card">
+          <div class="setup-grid">
+            <label><span>Jenis latihan</span><select id="quizType"><option value="kana">Kana → Romaji</option><option value="vocab-meaning">Kosakata → Arti</option><option value="vocab-reading">Kosakata → Bacaan</option><option value="kanji-meaning">Kanji → Arti</option><option value="grammar">Grammar → Fungsi</option><option value="mixed">Campuran</option><option value="review">Review Salah</option></select></label>
+            <label><span>Level JLPT</span><select id="quizLevel"><option value="all">Semua level</option><option>N5</option><option>N4</option><option>N3</option></select></label>
+            <label><span>Jumlah soal</span><select id="questionCount"><option>10</option><option selected>20</option><option>30</option><option>50</option></select></label>
+          </div>
+          <div class="setup-info"><span>Review tersimpan <strong id="setupReview">0</strong></span><span>Mastered <strong id="setupMastered">0</strong></span><span>Akurasi <strong id="setupAccuracy">0%</strong></span></div>
+          <button id="startQuiz" class="primary-btn full">Mulai Latihan</button>
+        </div>
+        <div id="quizGame" class="quiz-game card hidden">
+          <div class="quiz-head"><span id="quizCounter">1 / 20</span><strong id="quizScore">0 benar</strong></div>
+          <div class="progress-track"><div id="quizBar"></div></div>
+          <div class="question-box"><small id="questionLabel"></small><div id="questionMain" class="question-main"></div><p id="questionSub"></p></div>
+          <div id="answerGrid" class="answer-grid"></div>
+          <div id="feedback" class="feedback hidden"></div>
+          <button id="nextQuestion" class="primary-btn full hidden">Lanjut</button>
+        </div>
+        <div id="quizResult" class="result-card card hidden">
+          <div class="result-ring"><strong id="resultPct">0%</strong><span>Akurasi</span></div><h2 id="resultTitle">Latihan selesai!</h2><p id="resultDesc"></p>
+          <div class="result-metrics"><div><small>Benar</small><strong id="resultCorrect">0</strong></div><div><small>Salah</small><strong id="resultWrong">0</strong></div><div><small>XP</small><strong id="resultXP">+0</strong></div></div>
+          <div class="hero-actions center"><button id="retryQuiz" class="primary-btn">Ulangi</button><button class="secondary-btn" data-nav="progress">Lihat Progress</button></div>
+        </div>
+      </section>
+
+      <section id="progress" class="page">
+        <div class="page-header"><div><span class="eyebrow">PROGRESS</span><h1>Perkembangan belajar</h1><p>Progress tersimpan otomatis pada browser perangkat ini.</p></div></div>
+        <div class="progress-summary">
+          <article class="big-stat card"><span>⚡</span><small>Total XP</small><strong id="pXP">0</strong></article><article class="big-stat card"><span>🎯</span><small>Akurasi</small><strong id="pAccuracy">0%</strong></article><article class="big-stat card"><span>⭐</span><small>Mastered</small><strong id="pMastered">0</strong></article><article class="big-stat card"><span>↻</span><small>Perlu Review</small><strong id="pReview">0</strong></article>
+        </div>
+        <div class="card level-progress-card"><h2>Progress per tahap</h2><div id="levelProgressList"></div></div>
+        <div class="card review-card"><div class="section-heading compact"><div><h2>Review Salah</h2><p>Item yang paling sering salah.</p></div><button id="clearReview" class="text-btn danger">Hapus review</button></div><div id="reviewList" class="review-list"></div></div>
+      </section>
+
+      <section id="about" class="page">
+        <div class="about-hero card"><div class="about-mark">日</div><div><span class="eyebrow">TENTANG PLATFORM</span><h1>Nihongo Journey</h1><p>Platform latihan mandiri untuk membantu pembelajar Indonesia membangun fondasi bahasa Jepang secara sistematis dari Kana hingga tingkat JLPT N3.</p></div></div>
+        <div class="about-grid">
+          <article class="card about-card"><h2>Tujuan</h2><p>Menyediakan latihan singkat, berulang, dan terstruktur melalui sistem mastery. Materi dibagi menjadi fondasi Kana serta jalur JLPT N5, N4, dan N3.</p><p class="note">Catatan: JLPT tidak menerbitkan daftar kosakata/kanji resmi per level. Materi level pada web ini merupakan kumpulan latihan pembelajaran, bukan daftar resmi JLPT.</p></article>
+          <article class="card author-card"><span class="author-label">PENYUSUN & PENGEMBANG</span><div class="author-avatar">MP</div><h2>Muhamad Panji, S.Pd.</h2><p>Pengembang Nihongo Journey</p><div class="author-tags"><span>Japanese Learning</span><span>Web Learning</span><span>Self Practice</span></div></article>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile-nav" aria-label="Navigasi seluler"><button data-nav="home"><span>⌂</span>Home</button><button data-nav="path"><span>道</span>Jalur</button><button data-nav="library"><span>本</span>Materi</button><button data-nav="quiz"><span>✓</span>Quiz</button><button data-nav="progress"><span>◉</span>Progress</button></nav>
+    <footer><strong>Nihongo Journey</strong><span>Disusun oleh Muhamad Panji, S.Pd.</span><small>© 2026 · Belajar konsisten, sedikit demi sedikit.</small></footer>
+  </div>
+  <script src="data.js"></script><script src="script.js"></script>
+</body>
+</html>
